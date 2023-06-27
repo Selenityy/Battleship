@@ -1,7 +1,7 @@
 import { Ship } from "./shipFactory";
 
-const width = 10;
-const height = 10;
+const width = 9;
+const height = 9;
 
 class GameBoard {
   constructor() {
@@ -10,9 +10,9 @@ class GameBoard {
   }
 
   initialize() {
-    for (let y = 1; y <= height; y++) {
+    for (let y = 0; y <= height; y++) {
       let row = [];
-      for (let x = 1; x <= width; x++) {
+      for (let x = 0; x <= width; x++) {
         row.push({ x, y, hasShip: false, isShot: false, shipType: null });
       }
       this.board.push(row);
@@ -20,9 +20,26 @@ class GameBoard {
   }
 
   placeShip(ship, startX, startY, endX, endY) {
+    // check if cell is valid
+    if (
+      startX < 0 ||
+      startX > width ||
+      startY < 0 ||
+      startY > height ||
+      endX < 0 ||
+      endX > width ||
+      endY < 0 ||
+      endY > height
+    ) {
+      console.log(
+        "Invalid coordinates, please provide valid X & Y coordinates."
+      );
+      return false;
+    }
+
     let shipType = ship.name;
-    let startCell = this.board[startY - 1][startX - 1];
-    let endCell = this.board[endY - 1][endX - 1];
+    let startCell = this.board[startY][startX];
+    let endCell = this.board[endY][endX];
 
     // check the ship's direction
     let direction;
@@ -37,37 +54,34 @@ class GameBoard {
       return false;
     }
 
-    // find the cells between
-    let betweenCells = [];
-    if (direction === "horizontal") {
-      const minY = Math.min(startY, endY);
-      const maxY = Math.max(startY, endY);
-      for (let y = minY; y < maxY; y++) {
-        betweenCells.push(this.board[y - 1][startX - 1]);
-      }
-    } else if (direction === "vertical") {
-      const minX = Math.min(startX, endX);
-      const maxX = Math.max(startX, endX);
-      for (let x = minX; x < maxX; x++) {
-        betweenCells.push(this.board[startY - 1][x - 1]);
-      }
-    }
-
     // check is cell has a ship already, if not then place it
-    let allCellsEmpty = betweenCells.every((cell) => !cell.hasShip);
-    if (
-      startCell.hasShip === false &&
-      endCell.hasShip === false &&
-      allCellsEmpty
-    ) {
-      return [
-        (startCell.hasShip = true),
+    if (this.checkIfEmpty(startCell, endCell) === true) {
+      (startCell.hasShip = true),
         (startCell.shipType = shipType),
         (endCell.hasShip = true),
-        (endCell.shipType = shipType),
-        (betweenCells.hasShip = true),
-        (betweenCells.shipType = shipType),
-      ];
+        (endCell.shipType = shipType);
+
+      // cells in-between
+      if (direction === "vertical") {
+        const minY = Math.min(startY, endY);
+        const maxY = Math.max(startY, endY);
+        const x = startX;
+        for (let y = minY; y <= maxY; y++) {
+          let cell = this.board[y][x];
+          cell.hasShip = true;
+          cell.shipType = shipType;
+        }
+      } else if (direction === "horizontal") {
+        const minX = Math.min(startX, endX);
+        const maxX = Math.max(startX, endX);
+        const y = startY;
+        for (let x = minX; x <= maxX; x++) {
+          let cell = this.board[y][x];
+          cell.hasShip = true;
+          cell.shipType = shipType;
+        }
+      }
+      return true;
     } else {
       console.log("Invalid location, place ship on a free cell.");
       return false;
@@ -80,13 +94,9 @@ class GameBoard {
 
   checkIfSunk() {}
 
-  checkIfEmpty() {
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        if (this.board[y][x].hasShip) {
-          return false;
-        }
-      }
+  checkIfEmpty(startCell, endCell) {
+    if (startCell.hasShip === true || endCell.hasShip === true) {
+      return false;
     }
     return true;
   }

@@ -1,12 +1,8 @@
-import { Ship } from "./shipTypes";
+import { GameBoard } from "./factories/gameboardFactory";
+import { Ship } from "./factories/shipFactory";
 
-const carrier = new Ship("carrier", 5);
-console.log(carrier);
-console.log(carrier.isHit());
-console.log(carrier.isHit());
-console.log(carrier.isHit());
-console.log(carrier.isHit());
-console.log(carrier.isHit());
-console.log(carrier);
-console.log(carrier.isSunk());
-console.log(carrier);
+let testGameBoard = new GameBoard();
+let ship = new Ship("carrier", 5);
+
+let cells = testGameBoard.placeShip(ship, 1, 1, 1, 5);
+console.log(cells);

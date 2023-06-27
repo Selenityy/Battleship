@@ -1,16 +1,15 @@
 import { Ship } from "../js files/factories/shipFactory";
 
-describe("Ship", () => {
+describe("Ship factory", () => {
   let ship;
   beforeEach(() => {
-    ship = new Ship("carrier", 5, "A1");
+    ship = new Ship("carrier", 5);
   });
 
   test("create ship", () => {
     expect(ship).toEqual({
       name: "carrier",
       length: 5,
-      coordinates: "A1",
       hitCount: 0,
       sunk: false,
     });
