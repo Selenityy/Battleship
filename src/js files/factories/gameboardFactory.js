@@ -6,6 +6,13 @@ const height = 9;
 class GameBoard {
   constructor() {
     this.board = [];
+    this.ships = [
+      new Ship("carrier", 5),
+      new Ship("battleship", 4),
+      new Ship("cruiser", 3),
+      new Ship("submarine", 3),
+      new Ship("destroyer", 2),
+    ];
     this.initialize();
   }
 
@@ -31,13 +38,10 @@ class GameBoard {
       endY < 0 ||
       endY > height
     ) {
-      console.log(
-        "Invalid coordinates, please provide valid X & Y coordinates."
-      );
-      return false;
+      return "Invalid coordinates, please provide valid X & Y coordinates.";
     }
 
-    let shipType = ship.name;
+    let shipName = ship.name;
     let startCell = this.board[startY][startX];
     let endCell = this.board[endY][endX];
 
@@ -48,18 +52,15 @@ class GameBoard {
     } else if (startY === endY) {
       direction = "horizontal";
     } else {
-      console.log(
-        "Invalid ship placement, please make sure the ship is places horizontally or vertically"
-      );
-      return false;
+      return "Invalid ship placement, please make sure the ship is places horizontally or vertically";
     }
 
     // check is cell has a ship already, if not then place it
     if (this.checkIfEmpty(startCell, endCell) === true) {
       (startCell.hasShip = true),
-        (startCell.shipType = shipType),
+        (startCell.shipType = shipName),
         (endCell.hasShip = true),
-        (endCell.shipType = shipType);
+        (endCell.shipType = shipName);
 
       // cells in-between
       if (direction === "vertical") {
@@ -69,7 +70,7 @@ class GameBoard {
         for (let y = minY; y <= maxY; y++) {
           let cell = this.board[y][x];
           cell.hasShip = true;
-          cell.shipType = shipType;
+          cell.shipType = shipName;
         }
       } else if (direction === "horizontal") {
         const minX = Math.min(startX, endX);
@@ -78,21 +79,41 @@ class GameBoard {
         for (let x = minX; x <= maxX; x++) {
           let cell = this.board[y][x];
           cell.hasShip = true;
-          cell.shipType = shipType;
+          cell.shipType = shipName;
         }
       }
       return true;
     } else {
-      console.log("Invalid location, place ship on a free cell.");
-      return false;
+      return "Invalid location, place ship on a free cell.";
     }
   }
 
-  receiveAttack(coordinates) {}
+  receiveAttack(x, y) {
+    if (y < 0 || y >= height || x < 0 || x >= width) {
+      return "Invalid coordinates, please provide valid X & Y coordinates.";
+    }
 
-  trackShots(coordinates) {}
+    let cell = this.board[y][x];
 
-  checkIfSunk() {}
+    if (cell.isShot) {
+      return "This spot has already been attacked, please attack a different coordinate.";
+    } else {
+      cell.isShot = true;
+    }
+
+    if (cell.hasShip) {
+      let shipName = cell.shipType;
+      let ship = this.ships.find((ship) => ship.name === shipName);
+      ship.hit();
+      if (ship.isSunk()) {
+        return "Hit! Ship has been sunk";
+      } else {
+        return "Hit!";
+      }
+    } else {
+      return "Miss!";
+    }
+  }
 
   checkIfEmpty(startCell, endCell) {
     if (startCell.hasShip === true || endCell.hasShip === true) {
