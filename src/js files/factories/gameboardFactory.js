@@ -13,6 +13,7 @@ class GameBoard {
       new Ship("submarine", 3),
       new Ship("destroyer", 2),
     ];
+    this.gg = false;
     this.initialize();
   }
 
@@ -106,7 +107,11 @@ class GameBoard {
       let ship = this.ships.find((ship) => ship.name === shipName);
       ship.hit();
       if (ship.isSunk()) {
-        return "Hit! Ship has been sunk";
+        if (this.checkIfGG) {
+          return "GG!";
+        } else {
+          return "Hit! Ship has been sunk";
+        }
       } else {
         return "Hit!";
       }
@@ -120,6 +125,14 @@ class GameBoard {
       return false;
     }
     return true;
+  }
+
+  checkIfGG() {
+    let allShipsSunk = this.ships.every((ship) => ship.sunk === true);
+    if (allShipsSunk) {
+      this.gg = true;
+      return true;
+    }
   }
 }
 
