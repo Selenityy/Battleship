@@ -1,5 +1,4 @@
 import { GameBoard } from "../js files/factories/gameboardFactory";
-import { Ship } from "../js files/factories/shipFactory";
 
 describe("GameBoard tests", () => {
   let testBoard;
@@ -72,7 +71,27 @@ describe("GameBoard tests", () => {
     expect(testBoard.ships[0].hitCount).toBe(2);
   });
 
-  test("did a ship sink", () => {});
+  test("did a ship sink", () => {
+    testBoard.receiveAttack(1, 1);
+    testBoard.receiveAttack(1, 2);
+    testBoard.receiveAttack(1, 3);
+    testBoard.receiveAttack(1, 4);
+    testBoard.receiveAttack(1, 5);
+    expect(testBoard.ships[0].sunk).toBe(true);
+  });
 
-  test("if game is over", () => {});
+  test("if game is over", () => {
+    let ship1 = testBoard.ships[0];
+    let ship2 = testBoard.ships[1];
+    let ship3 = testBoard.ships[2];
+    let ship4 = testBoard.ships[3];
+    let ship5 = testBoard.ships[4];
+    ship1.sunk = true;
+    ship2.sunk = true;
+    ship3.sunk = true;
+    ship4.sunk = true;
+    ship5.sunk = true;
+    testBoard.checkIfGG();
+    expect(testBoard.gg).toBe(true);
+  });
 });
