@@ -2,9 +2,12 @@ import { Ship } from "./shipFactory";
 
 const width = 9;
 const height = 9;
+let isValidPlacement;
 
 class GameBoard {
-  constructor() {
+  constructor(player, switchTurn) {
+    this.player = player;
+    this.switchTurn = switchTurn;
     this.board = [];
     this.ships = [
       new Ship("carrier", 5),
@@ -39,7 +42,10 @@ class GameBoard {
       endY < 0 ||
       endY > height
     ) {
+      isValidPlacement = false;
       return "Invalid coordinates, please provide valid X & Y coordinates.";
+    } else {
+      isValidPlacement = true;
     }
 
     let shipName = ship.name;
@@ -50,9 +56,12 @@ class GameBoard {
     let direction;
     if (startX === endX) {
       direction = "vertical";
+      isValidPlacement = true;
     } else if (startY === endY) {
       direction = "horizontal";
+      isValidPlacement = true;
     } else {
+      isValidPlacement = false;
       return "Invalid ship placement, please make sure the ship is places horizontally or vertically";
     }
 
@@ -85,8 +94,21 @@ class GameBoard {
       }
       return true;
     } else {
+      isValidPlacement = false;
       return "Invalid location, place ship on a free cell.";
     }
+  }
+
+  randomizePlacement(ship) {
+    let startX, startY, endX, endY;
+    while (!isValidPlacement) {
+      startX = Math.floor(Math.random() * 10);
+      startY = Math.floor(Math.random() * 10);
+      endX = Math.floor(Math.random() * 10);
+      endY = Math.floor(Math.random() * 10);
+      isValidPlacement = this.placeShip(ship, startX, startY, endX, endY);
+    }
+    return isValidPlacement;
   }
 
   receiveAttack(x, y) {
@@ -110,12 +132,15 @@ class GameBoard {
         if (this.checkIfGG) {
           return "GG!";
         } else {
+          this.switchTurn();
           return "Hit! Ship has been sunk";
         }
       } else {
+        this.switchTurn();
         return "Hit!";
       }
     } else {
+      this.switchTurn();
       return "Miss!";
     }
   }
@@ -124,6 +149,7 @@ class GameBoard {
     if (startCell.hasShip === true || endCell.hasShip === true) {
       return false;
     }
+    isValidPlacement = true;
     return true;
   }
 
@@ -133,6 +159,7 @@ class GameBoard {
       this.gg = true;
       return true;
     }
+    return false;
   }
 }
 

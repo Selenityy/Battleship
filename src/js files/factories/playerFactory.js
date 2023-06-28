@@ -1,9 +1,20 @@
 import { GameBoard } from "./gameboardFactory";
-import { Ship } from "./shipFactory";
 
 class Player {
-  constructor() {}
+  constructor(name) {
+    this.name = name;
+    this.gameboard = new GameBoard(this, this.switchTurn);
+  }
+
   fireAttack() {}
+
+  switchTurn = (playersTurnOver) => {
+    if (playersTurnOver === this.name) {
+      this.gameboard.switchTurn("PC");
+    } else if (playersTurnOver === pc) {
+      this.gameboard.switchTurn(this.name);
+    }
+  };
 }
 
 export { Player };
