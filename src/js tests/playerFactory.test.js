@@ -7,33 +7,42 @@ describe("Player tests", () => {
   let pc;
   let testBoard1;
   let testBoard2;
+  let whoseTurnNext;
 
   beforeEach(() => {
     player1 = new Player("Mew");
     pc = new Player("PC");
-    testBoard1 = new GameBoard();
-    testBoard2 = new GameBoard();
+    testBoard1 = player1.gameboard;
+    testBoard2 = pc.gameboard;
+    whoseTurnNext = "Mew";
   });
 
-  test("create a player with a name", () => {});
+  test("create a player with a name", () => {
+    expect(player1.name).toBe("Mew");
+  });
 
-  test("create a PC opponent", () => {});
+  test("create a PC opponent", () => {
+    expect(pc.name).toBe("PC");
+  });
 
-  test("create Player gameboard", () => {});
+  test("create Player gameboard", () => {
+    expect(player1.gameboard).toBe(testBoard1);
+  });
 
-  test("create PC gameboard", () => {});
+  test("create PC gameboard", () => {
+    expect(pc.gameboard).toBe(testBoard2);
+  });
 
-  test("places ship on a coordinate", () => {});
+  test("alerts player if PC ship was sank", () => {
+    let ship1 = player1.gameboard.ships[0];
+    ship1.sunk = true;
+    expect(testBoard1.ships[0].sunk).toBe(true);
+  });
 
-  test("places ship randomly on a coordinate", () => {});
-
-  test("fire an attack on the gameboard", () => {});
-
-  test("fire an attack off the gameboard and get an error", () => {});
-
-  test("fire an attack on the same spot and get an error", () => {});
-
-  test("alerts player if PC ship was sank", () => {});
-
-  test("switches turns", () => {});
+  test("switches turns", () => {
+    let mockSwitchTurn = jest.fn();
+    player1.gameboard.switchTurn = mockSwitchTurn;
+    player1.switchTurn("Mew");
+    expect(mockSwitchTurn).toHaveBeenCalledWith("PC");
+  });
 });

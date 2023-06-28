@@ -29,6 +29,12 @@ describe("GameBoard tests", () => {
     expect(testBoard.board[1][1].shipType).toBe("carrier");
   });
 
+  test("places ship randomly on a coordinate", () => {
+    let ship = testBoard.ships[1];
+    let result = testBoard.randomizePlacement(ship);
+    expect(result).toBe(true);
+  });
+
   test("check what type of ship is placed in all it's cells", () => {
     expect(testBoard.board[1][1].shipType).toBe("carrier");
     expect(testBoard.board[2][1].shipType).toBe("carrier");
