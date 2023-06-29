@@ -7,14 +7,14 @@ describe("Player tests", () => {
   let pc;
   let testBoard1;
   let testBoard2;
-  let whoseTurnNext;
+  let nextTurnIs;
 
   beforeEach(() => {
     player1 = new Player("Mew");
     pc = new Player("PC");
     testBoard1 = player1.gameboard;
     testBoard2 = pc.gameboard;
-    whoseTurnNext = "Mew";
+    nextTurnIs = null;
   });
 
   test("create a player with a name", () => {
@@ -33,16 +33,18 @@ describe("Player tests", () => {
     expect(pc.gameboard).toBe(testBoard2);
   });
 
+  test("player fires attack & switches turns", () => {
+    testBoard2.placeShip(testBoard2.ships[3], 3, 3, 5, 3);
+    nextTurnIs = player1.fireAttack(testBoard2, 3, 3);
+    expect(nextTurnIs).toBe("PC");
+    testBoard1.placeShip(testBoard1.ships[3], 3, 3, 5, 3);
+    nextTurnIs = pc.fireAttack(testBoard1, 3, 3);
+    expect(nextTurnIs).toBe("Mew");
+  });
+
   test("alerts player if PC ship was sank", () => {
     let ship1 = player1.gameboard.ships[0];
     ship1.sunk = true;
     expect(testBoard1.ships[0].sunk).toBe(true);
-  });
-
-  test("switches turns", () => {
-    let mockSwitchTurn = jest.fn();
-    player1.gameboard.switchTurn = mockSwitchTurn;
-    player1.switchTurn("Mew");
-    expect(mockSwitchTurn).toHaveBeenCalledWith("PC");
   });
 });
