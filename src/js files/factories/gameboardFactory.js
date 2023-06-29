@@ -3,6 +3,7 @@ import { Ship } from "./shipFactory";
 const width = 9;
 const height = 9;
 let isValidPlacement;
+let currentTurnIs;
 
 class GameBoard {
   constructor(player, switchTurn) {
@@ -111,12 +112,12 @@ class GameBoard {
     return isValidPlacement;
   }
 
-  receiveAttack(x, y) {
+  receiveAttack(toWhichGameboard, x, y) {
     if (y < 0 || y >= height || x < 0 || x >= width) {
       return "Invalid coordinates, please provide valid X & Y coordinates.";
     }
 
-    let cell = this.board[y][x];
+    let cell = toWhichGameboard.board[y][x];
 
     if (cell.isShot) {
       return "This spot has already been attacked, please attack a different coordinate.";
@@ -132,15 +133,12 @@ class GameBoard {
         if (this.checkIfGG) {
           return "GG!";
         } else {
-          this.switchTurn();
           return "Hit! Ship has been sunk";
         }
       } else {
-        this.switchTurn();
         return "Hit!";
       }
     } else {
-      this.switchTurn();
       return "Miss!";
     }
   }
