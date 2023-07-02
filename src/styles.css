@@ -19,6 +19,7 @@ body {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
+  padding: 50px;
 }
 
 #startBtn {
@@ -36,4 +37,15 @@ body {
 
 #pcName {
   height: 1.3rem;
+}
+
+#boards {
+  display: flex;
+  justify-content: center;
+  gap: 50rem;
+}
+
+#gameboards {
+  visibility: hidden;
+  padding: 50px;
 }

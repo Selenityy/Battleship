@@ -3,7 +3,6 @@ import { Ship } from "./shipFactory";
 const width = 9;
 const height = 9;
 let isValidPlacement;
-let currentTurnIs;
 
 class GameBoard {
   constructor(player, switchTurn) {
@@ -100,16 +99,32 @@ class GameBoard {
     }
   }
 
-  randomizePlacement(ship) {
-    let startX, startY, endX, endY;
-    while (!isValidPlacement) {
-      startX = Math.floor(Math.random() * 10);
-      startY = Math.floor(Math.random() * 10);
-      endX = Math.floor(Math.random() * 10);
-      endY = Math.floor(Math.random() * 10);
-      isValidPlacement = this.placeShip(ship, startX, startY, endX, endY);
-    }
-    return isValidPlacement;
+  randomizePlacement() {
+    this.ships.forEach((ship) => {
+      let isValidPlacement = false;
+      while (!isValidPlacement) {
+        let startX = Math.floor(Math.random() * width);
+        let startY = Math.floor(Math.random() * height);
+        let endX, endY;
+        if (Math.random() < 0.5) {
+          endX = startX + ship.length - 1;
+          endY = startY;
+        } else {
+          endX = startX;
+          endY = startY + ship.length - 1;
+        }
+        isValidPlacement = this.placeShip(ship, startX, startY, endX, endY);
+      }
+    });
+    // let startX, startY, endX, endY;
+    // while (!isValidPlacement) {
+    //   startX = Math.floor(Math.random() * 10);
+    //   startY = Math.floor(Math.random() * 10);
+    //   endX = Math.floor(Math.random() * 10);
+    //   endY = Math.floor(Math.random() * 10);
+    //   isValidPlacement = this.placeShip(ship, startX, startY, endX, endY);
+    // }
+    // return isValidPlacement;
   }
 
   receiveAttack(toWhichGameboard, x, y) {
@@ -125,6 +140,11 @@ class GameBoard {
       cell.isShot = true;
     }
 
+    let boardId = toWhichGameboard === player1Board ? "board1" : "board2";
+    let cellSelector = `#${boardId} .row:nth-child(${y + 1}) .cell:nth-child(${
+      x + 1
+    })`;
+
     if (cell.hasShip) {
       let shipName = cell.shipType;
       let ship = this.ships.find((ship) => ship.name === shipName);
@@ -133,12 +153,18 @@ class GameBoard {
         if (this.checkIfGG) {
           return "GG!";
         } else {
+          let cellElement = document.querySelector(cellSelector);
+          cellElement.textContent = "-";
           return "Hit! Ship has been sunk";
         }
       } else {
+        let cellElement = document.querySelector(cellSelector);
+        cellElement.textContent = "X";
         return "Hit!";
       }
     } else {
+      let cellElement = document.querySelector(cellSelector);
+      cellElement.textContent = "M";
       return "Miss!";
     }
   }
@@ -161,4 +187,24 @@ class GameBoard {
   }
 }
 
-export { GameBoard };
+const createGameBoardGrid = (gameBoard, divID) => {
+  let container = document.getElementById(divID);
+  for (let y = 0; y < height; y++) {
+    let row = document.createElement("div");
+    row.className = "row";
+    for (let x = 0; x < width; x++) {
+      let cell = document.createElement("div");
+      cell.className = "cell";
+      if (gameBoard.board[y][x].hasShip) {
+        cell.textContent = "S";
+      } else if (gameBoard.board[y][x].isShot) {
+        cell.textContent = "X";
+      }
+      row.appendChild(cell);
+    }
+    container.appendChild(row);
+  }
+  console.log("done");
+};
+
+export { GameBoard, createGameBoardGrid };

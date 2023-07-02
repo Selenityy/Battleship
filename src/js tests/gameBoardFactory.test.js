@@ -1,11 +1,17 @@
 import { GameBoard } from "../js files/factories/gameboardFactory";
+import { Player } from "../js files/factories/playerFactory";
 
 describe("GameBoard tests", () => {
   let testBoard;
+  let mewBoard;
+  let mew;
 
   beforeEach(() => {
     testBoard = new GameBoard();
     testBoard.placeShip(testBoard.ships[0], 1, 1, 1, 5);
+    mew = new Player("Mew");
+    mewBoard = mew.gameboard;
+    mewBoard.placeShip(mewBoard.ships[0], 1, 1, 1, 5);
   });
 
   test("creating a board should have a length of 10", () => {
@@ -45,59 +51,59 @@ describe("GameBoard tests", () => {
   });
 
   test("did attack land", () => {
-    expect(testBoard.receiveAttack(1, 1)).toBe("Hit!");
-    expect(testBoard.board[1][1].isShot).toBe(true);
-    expect(testBoard.board[1][1].shipType).toBe("carrier");
+    expect(mewBoard.receiveAttack(mewBoard, 1, 1)).toBe("Hit!");
+    expect(mewBoard.board[1][1].isShot).toBe(true);
+    expect(mewBoard.board[1][1].shipType).toBe("carrier");
   });
 
   test("did attack miss", () => {
-    expect(testBoard.receiveAttack(5, 5)).toBe("Miss!");
-    expect(testBoard.board[5][5].isShot).toBe(true);
-    expect(testBoard.board[5][5].hasShip).toBe(false);
+    expect(mewBoard.receiveAttack(mewBoard, 5, 5)).toBe("Miss!");
+    expect(mewBoard.board[5][5].isShot).toBe(true);
+    expect(mewBoard.board[5][5].hasShip).toBe(false);
   });
 
   test("attacking the same spot results in an error", () => {
-    testBoard.receiveAttack(0, 0);
-    expect(testBoard.board[0][0].isShot).toBe(true);
-    expect(testBoard.receiveAttack(0, 0)).toBe(
+    mewBoard.receiveAttack(mewBoard, 1, 1);
+    expect(mewBoard.board[1][1].isShot).toBe(true);
+    expect(mewBoard.receiveAttack(mewBoard, 1, 1)).toBe(
       "This spot has already been attacked, please attack a different coordinate."
     );
   });
 
   test("give error if the attack is off the board", () => {
-    expect(testBoard.receiveAttack(15, 15)).toBe(
+    expect(mewBoard.receiveAttack(mewBoard, 15, 15)).toBe(
       "Invalid coordinates, please provide valid X & Y coordinates."
     );
   });
 
   test("does the Ship class track the hitCount", () => {
-    testBoard.receiveAttack(1, 1);
-    expect(testBoard.ships[0].hitCount).toBe(1);
-    testBoard.receiveAttack(1, 2);
-    expect(testBoard.ships[0].hitCount).toBe(2);
+    mewBoard.receiveAttack(mewBoard, 1, 1);
+    expect(mewBoard.ships[0].hitCount).toBe(1);
+    mewBoard.receiveAttack(mewBoard, 1, 2);
+    expect(mewBoard.ships[0].hitCount).toBe(2);
   });
 
   test("did a ship sink", () => {
-    testBoard.receiveAttack(1, 1);
-    testBoard.receiveAttack(1, 2);
-    testBoard.receiveAttack(1, 3);
-    testBoard.receiveAttack(1, 4);
-    testBoard.receiveAttack(1, 5);
-    expect(testBoard.ships[0].sunk).toBe(true);
+    mewBoard.receiveAttack(mewBoard, 1, 1);
+    mewBoard.receiveAttack(mewBoard, 1, 2);
+    mewBoard.receiveAttack(mewBoard, 1, 3);
+    mewBoard.receiveAttack(mewBoard, 1, 4);
+    mewBoard.receiveAttack(mewBoard, 1, 5);
+    expect(mewBoard.ships[0].sunk).toBe(true);
   });
 
   test("if game is over", () => {
-    let ship1 = testBoard.ships[0];
-    let ship2 = testBoard.ships[1];
-    let ship3 = testBoard.ships[2];
-    let ship4 = testBoard.ships[3];
-    let ship5 = testBoard.ships[4];
+    let ship1 = mewBoard.ships[0];
+    let ship2 = mewBoard.ships[1];
+    let ship3 = mewBoard.ships[2];
+    let ship4 = mewBoard.ships[3];
+    let ship5 = mewBoard.ships[4];
     ship1.sunk = true;
     ship2.sunk = true;
     ship3.sunk = true;
     ship4.sunk = true;
     ship5.sunk = true;
-    testBoard.checkIfGG();
-    expect(testBoard.gg).toBe(true);
+    mewBoard.checkIfGG();
+    expect(mewBoard.gg).toBe(true);
   });
 });

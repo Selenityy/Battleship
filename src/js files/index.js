@@ -1,5 +1,6 @@
 import { Player } from "./factories/playerFactory";
 import "../../src/styles.css";
+import { createGameBoardGrid } from "./factories/gameboardFactory";
 
 // game loop
 // set up a new game by creating players & game boards with predetermined coords
@@ -11,7 +12,7 @@ import "../../src/styles.css";
 // create win conditions
 
 const removeForm = () => {
-  const formDiv = document.getElementById("formBox");
+  const formDiv = document.getElementById("getName");
   while (formDiv.firstChild) {
     formDiv.removeChild(formDiv.lastChild);
   }
@@ -31,9 +32,24 @@ startBtn.onclick = function (event) {
   const pcBoard = pc.gameboard;
 
   removeForm();
+  const boardDivs = document.getElementById("gameboards");
+  boardDivs.style.visibility = "visible";
 
   console.log(player1);
   console.log(player1Board);
   console.log(pc);
   console.log(pcBoard);
+
+  let script = document.getElementById("script");
+  let scriptText = script.innerHTML;
+  console.log(scriptText);
+
+  let attackResult = document.getElementById("attackResult");
+  let attackResultText = attackResult.innerHTML;
+  console.log(attackResultText);
+
+  createGameBoardGrid(player1Board, "board1");
+  player1Board.randomizePlacement();
+  createGameBoardGrid(pcBoard, "board2");
+  pcBoard.randomizePlacement();
 };

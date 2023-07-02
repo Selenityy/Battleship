@@ -1,6 +1,4 @@
 import { Player } from "../js files/factories/playerFactory";
-import { GameBoard } from "../js files/factories/gameboardFactory";
-import { Ship } from "../js files/factories/shipFactory";
 
 describe("Player tests", () => {
   let player1;
